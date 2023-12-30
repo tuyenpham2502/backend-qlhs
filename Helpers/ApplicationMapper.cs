@@ -1,8 +1,8 @@
 using AutoMapper;
-using MyApiNetCore6.Data;
-using MyApiNetCore6.Models;
+using QlhsServer.Data;
+using QlhsServer.Models;
 
-namespace MyApiNetCore6.Helpers
+namespace QlhsServer.Helpers
 {
     public class ApplicationMapper : Profile
     {

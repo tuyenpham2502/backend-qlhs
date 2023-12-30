@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MyApiNetCore6.Models
+namespace QlhsServer.Models
 {
     public class SignUpModel
     {

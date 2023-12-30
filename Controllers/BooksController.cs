@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyApiNetCore6.Data;
+using QlhsServer.Data;
 
-namespace MyApiNetCore6.Controllers
+namespace QlhsServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

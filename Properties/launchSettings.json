@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MyApiNetCore6": {
+    "QlhsServer": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

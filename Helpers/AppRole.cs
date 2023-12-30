@@ -1,4 +1,4 @@
-namespace MyApiNetCore6.Helpers
+namespace QlhsServer.Helpers
 {
     public static class AppRole
     {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MyApiNetCore6.Data
+namespace QlhsServer.Data
 {
     public class BookStoreContext : IdentityDbContext<ApplicationUser>
     {

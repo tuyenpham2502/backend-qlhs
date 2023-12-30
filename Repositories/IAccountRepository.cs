@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using MyApiNetCore6.Models;
+using QlhsServer.Models;
 
-namespace MyApiNetCore6.Repositories
+namespace QlhsServer.Repositories
 {
     public interface IAccountRepository
     {

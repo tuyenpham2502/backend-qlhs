@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using MyApiNetCore6.Data;
-using MyApiNetCore6.Helpers;
-using MyApiNetCore6.Models;
+using QlhsServer.Data;
+using QlhsServer.Helpers;
+using QlhsServer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace MyApiNetCore6.Repositories
+namespace QlhsServer.Repositories
 {
     public class AccountRepository : IAccountRepository
     {

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyApiNetCore6.Models;
-using MyApiNetCore6.Repositories;
+using QlhsServer.Models;
+using QlhsServer.Repositories;
 
-namespace MyApiNetCore6.Controllers
+namespace QlhsServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

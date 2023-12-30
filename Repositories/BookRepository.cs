@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MyApiNetCore6.Data;
-using MyApiNetCore6.Models;
+using QlhsServer.Data;
+using QlhsServer.Models;
 
-namespace MyApiNetCore6.Repositories
+namespace QlhsServer.Repositories
 {
     public class BookRepository : IBookRepository
     {
