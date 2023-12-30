@@ -12,8 +12,8 @@ using MyApiNetCore6.Data;
 namespace _net_qlhs_server.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20231218095429_Dbinit")]
-    partial class Dbinit
+    [Migration("20231229173921_initDB")]
+    partial class initDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

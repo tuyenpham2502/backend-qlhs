@@ -57,7 +57,6 @@ namespace MyApiNetCore6.Repositories
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
             );
 
-            var refreshToken = GenerateRefreshToken();
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
