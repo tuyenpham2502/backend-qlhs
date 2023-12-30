@@ -17,26 +17,17 @@ namespace QlhsServer.Controllers
         }
 
         [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp(SignUpModel signUpModel)
+        public async Task<object> SignUp(SignUpModel signUpModel)
         {
             var result = await accountRepo.SignUpAsync(signUpModel);
-            if (result.Succeeded)
-            {
-                return Ok(result.Succeeded);
-            }
-
-            return Unauthorized();
+            
+            return Ok(result);
         }
 
         [HttpPost("SignIn")]
-        public async Task<IActionResult> SignIn(SignInModel signInModel)
+        public async Task<object> SignIn(SignInModel signInModel)
         {
             var result = await accountRepo.SignInAsync(signInModel);
-
-            if (string.IsNullOrEmpty(result))
-            {
-                return Unauthorized();
-            }
 
             return Ok(result);
         }

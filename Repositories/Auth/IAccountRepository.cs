@@ -5,7 +5,7 @@ namespace QlhsServer.Repositories
 {
     public interface IAccountRepository
     {
-        public Task<IdentityResult> SignUpAsync(SignUpModel model);
-        public Task<string> SignInAsync(SignInModel model);
+        public Task<object> SignUpAsync(SignUpModel model);
+        public Task<object> SignInAsync(SignInModel model);
     }
 }
