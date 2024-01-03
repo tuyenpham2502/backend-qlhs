@@ -4,7 +4,6 @@ namespace QlhsServer.Models
     {
         public string Token { get; set; }
 
-        public int Status { get; set; }
 
         public string Message { get; set; }
 
@@ -12,8 +11,6 @@ namespace QlhsServer.Models
 
     public class SignInResponseFailModel
     {
-        public int Status { get; set; }
-
         public string ErrorMessage { get; set; }
     }
 
