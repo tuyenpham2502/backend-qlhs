@@ -42,10 +42,9 @@ namespace QlhsServer.Repositories
                 }
 
                 var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, model.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                };
 
                 var userRoles = await userManager.GetRolesAsync(user);
                 foreach (var role in userRoles)
@@ -53,14 +52,14 @@ namespace QlhsServer.Repositories
                     authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
                 }
 
-                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+                var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
 
                 var token = new JwtSecurityToken(
                     issuer: configuration["JWT:ValidIssuer"],
                     audience: configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(20),
+                    expires: DateTime.Now.AddMinutes(60),
                     claims: authClaims,
-                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
+                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
                 );
 
 
@@ -91,34 +90,34 @@ namespace QlhsServer.Repositories
                 UserName = model.Email
             };
 
-           
-                var result = await userManager.CreateAsync(user, model.Password);
 
-                System.Console.WriteLine(result.Succeeded);
-                if (result.Succeeded)
-                {
-                    //kiểm tra role Customer đã có
-                    if (!await roleManager.RoleExistsAsync(AppRole.Customer))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(AppRole.Customer));
-                    }
+            var result = await userManager.CreateAsync(user, model.Password);
 
-                    await userManager.AddToRoleAsync(user, AppRole.Customer);
-                    return new SignUpResponseSuccessModel
-                    {
-                        Status = StatusCodes.Status200OK,
-                        Message = "Sign up successfully"
-                    };
-                }
-                else
+            System.Console.WriteLine(result.Succeeded);
+            if (result.Succeeded)
+            {
+                //kiểm tra role Customer đã có
+                if (!await roleManager.RoleExistsAsync(AppRole.Customer))
                 {
-                    return new SignUpResponseFailModel
-                    {
-                        Status = StatusCodes.Status400BadRequest,
-                        ErrorMessage = result.Errors.First().Description
-                    };
+                    await roleManager.CreateAsync(new IdentityRole(AppRole.Customer));
                 }
 
+                await userManager.AddToRoleAsync(user, AppRole.Customer);
+                return new SignUpResponseSuccessModel
+                {
+                    Status = StatusCodes.Status200OK,
+                    Message = "Sign up successfully"
+                };
             }
+            else
+            {
+                return new SignUpResponseFailModel
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ErrorMessage = result.Errors.First().Description
+                };
+            }
+
+        }
     }
 }
