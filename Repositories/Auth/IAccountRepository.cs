@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using QlhsServer.Models;
 
 namespace QlhsServer.Repositories
