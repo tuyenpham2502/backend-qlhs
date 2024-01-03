@@ -27,8 +27,6 @@ namespace QlhsServer.Repositories
 
         public async Task<object> SignInAsync(SignInModel model)
         {
-            try
-            {
                 var user = await userManager.FindByEmailAsync(model.Email);
                 var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
 
@@ -36,7 +34,6 @@ namespace QlhsServer.Repositories
                 {
                     return new SignInResponseFailModel
                     {
-                        Status = StatusCodes.Status401Unauthorized,
                         ErrorMessage = "Email or password is incorrect",
                     };
                 }
@@ -66,19 +63,9 @@ namespace QlhsServer.Repositories
                 return new SignInResponseSuccessModel
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Status = StatusCodes.Status200OK,
                     Message = "Sign in successfully"
                 };
             }
-            catch (Exception e)
-            {
-                return new SignInResponseFailModel
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    ErrorMessage = e.Message
-                };
-            }
-        }
 
         public async Task<object> SignUpAsync(SignUpModel model)
         {
