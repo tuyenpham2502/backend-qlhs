@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QlhsServer.Data;
 using QlhsServer.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+    using System.Security.Claims;
 namespace QlhsServer.Repositories
 {
     public class UserRepository : IUserRepository

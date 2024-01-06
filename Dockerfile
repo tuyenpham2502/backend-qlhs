@@ -25,6 +25,8 @@ COPY --from=build /app/out .
 
 # Expose the port that the app is listening on (change if your app uses a different port)
 EXPOSE 80
+# Copy the FileStorage folder to the container
+COPY ["FileStorage", "./FileStorage"]
 
 # Set the ASP.NET Core environment variable to 'Development'
 # ENV ASPNETCORE_ENVIRONMENT=Development
