@@ -47,7 +47,7 @@ public class ErrorHandlerMiddleware
 
                 default:
                     errorResponse.StatusCode = StatusCodes.Status500InternalServerError;
-                    errorResponse.Message = "Internal Server Error";
+                    errorResponse.Message = ex.Message;
                     break;
             }
 

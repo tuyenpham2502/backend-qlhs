@@ -5,7 +5,7 @@ using QlhsServer.Repositories;
 
 namespace QlhsServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace QlhsServer.Controllers
         }
 
         [HttpPost("SignUp")]
-        public async Task<object> SignUp(SignUpModel signUpModel)
+        public async Task<IActionResult> SignUp(SignUpModel signUpModel)
         {
             var result = await accountRepo.SignUpAsync(signUpModel);
             
@@ -25,7 +25,7 @@ namespace QlhsServer.Controllers
         }
 
         [HttpPost("SignIn")]
-        public async Task<object> SignIn(SignInModel signInModel)
+        public async Task<IActionResult> SignIn(SignInModel signInModel)
         {
             var result = await accountRepo.SignInAsync(signInModel);
 

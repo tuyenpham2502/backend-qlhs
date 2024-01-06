@@ -9,7 +9,7 @@ using QlhsServer.Data;
 
 namespace QlhsServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {

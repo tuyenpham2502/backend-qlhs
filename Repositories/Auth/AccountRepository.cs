@@ -27,45 +27,45 @@ namespace QlhsServer.Repositories
 
         public async Task<object> SignInAsync(SignInModel model)
         {
-                var user = await userManager.FindByEmailAsync(model.Email);
-                var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+            var user = await userManager.FindByEmailAsync(model.Email);
+            var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
 
-                if (user == null || !passwordValid)
+            if (user == null || !passwordValid)
+            {
+                return new
                 {
-                    return new SignInResponseFailModel
-                    {
-                        ErrorMessage = "Email or password is incorrect",
-                    };
-                }
+                    ErrorMessage = "Email or password is incorrect",
+                };
+            }
 
-                var authClaims = new List<Claim>
+            var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
 
-                var userRoles = await userManager.GetRolesAsync(user);
-                foreach (var role in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                }
-
-                var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: configuration["JWT:ValidIssuer"],
-                    audience: configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(60),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
-                );
-
-
-                return new SignInResponseSuccessModel
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Message = "Sign in successfully"
-                };
+            var userRoles = await userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
             }
+
+            var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: configuration["JWT:ValidIssuer"],
+                audience: configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddMinutes(60),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
+            );
+
+
+            return new
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                Message = "Sign in successfully"
+            };
+        }
 
         public async Task<object> SignUpAsync(SignUpModel model)
         {
@@ -90,7 +90,7 @@ namespace QlhsServer.Repositories
                 }
 
                 await userManager.AddToRoleAsync(user, AppRole.Customer);
-                return new SignUpResponseSuccessModel
+                return new 
                 {
                     Status = StatusCodes.Status200OK,
                     Message = "Sign up successfully"
@@ -98,7 +98,7 @@ namespace QlhsServer.Repositories
             }
             else
             {
-                return new SignUpResponseFailModel
+                return new 
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ErrorMessage = result.Errors.First().Description
