@@ -58,6 +58,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFileRepository, UploadFileRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
