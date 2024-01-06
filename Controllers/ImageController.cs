@@ -1,5 +1,6 @@
 
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QlhsServer.Models;
@@ -7,29 +8,43 @@ using QlhsServer.Repositories;
 
 namespace QlhsServer.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class UploadFileController : ControllerBase
+    [Route("[controller]")]
+    public class FileStorageController : ControllerBase
     {
         private readonly IFileRepository fileRepo;
 
-        public UploadFileController(IFileRepository repo)
+        public FileStorageController(IFileRepository repo)
         {
             fileRepo = repo;
         }
 
         [HttpPost("UploadFile")]
-        public async Task<object> UploadFile([FromForm] FileRequestModel model)
+        [Authorize]
+        public async Task<IActionResult> FileStorage([FromForm] FileModel model)
         {
-            var result = await fileRepo.UploadFileAsync(model);
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+
+            var result = await fileRepo.FileStorageAsync(model, userId);
             return Ok(result);
         }
 
         [HttpGet("GetFile/{imageName}")]
-        public async Task<FileContentResult> GetFile(string imageName)
+        public async Task<IActionResult> GetFile(string imageName)
         {
+            try {
             var result = await fileRepo.GetFileAsync(imageName);
+
             return File(result, "image/jpeg");
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound("File not found");
+            }
+
+
         }
     }
 }

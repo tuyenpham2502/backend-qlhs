@@ -12,7 +12,6 @@ namespace QlhsServer.Repositories
         private readonly IConfiguration configuration;
 
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
         public UserRepository(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             this.userManager = userManager;
@@ -42,9 +41,7 @@ namespace QlhsServer.Repositories
 
                 var user = await userManager.FindByIdAsync(claims[ClaimTypes.NameIdentifier]);
                 var userRoles = await userManager.GetRolesAsync(user);  
-                var users = await userManager.Users.ToListAsync();
-                System.Console.WriteLine(users);
-                return new UserResponseModel
+                return new 
                 {
                     Id = user.Id,
                     Email = user.Email,

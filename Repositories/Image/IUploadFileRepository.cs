@@ -5,7 +5,7 @@ namespace QlhsServer.Repositories
 {
     public interface IFileRepository
     {
-        public Task<object> UploadFileAsync([FromForm] FileRequestModel model);
+        public Task<object> FileStorageAsync([FromForm] FileModel model, string userId);
 
         public Task<byte []> GetFileAsync(string imageName);
     }

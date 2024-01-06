@@ -5,7 +5,7 @@ using QlhsServer.Repositories;
 
 namespace QlhsServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {

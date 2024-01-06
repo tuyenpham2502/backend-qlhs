@@ -4,7 +4,7 @@ using QlhsServer.Repositories;
 
 namespace QlhsServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace QlhsServer.Controllers
 
         [HttpGet("UserProfiles")]
         [Authorize]
-        public async Task<object> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             var result = await userRepo.GetUsersAsync(HttpContext);
 
