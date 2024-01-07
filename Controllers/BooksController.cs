@@ -13,9 +13,9 @@ namespace QlhsServer.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly BookStoreContext _context;
+        private readonly QlhsContext _context;
 
-        public BooksController(BookStoreContext context)
+        public BooksController(QlhsContext context)
         {
             _context = context;
         }

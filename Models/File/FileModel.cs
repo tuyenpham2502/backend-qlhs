@@ -7,5 +7,7 @@ namespace QlhsServer.Models
         [Required]
         public IFormFile File { get; set; } = null!;
         
+
+        
     }
 }

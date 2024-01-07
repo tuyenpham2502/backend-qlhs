@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QlhsServer.Models;
 using QlhsServer.Repositories;
 
 namespace QlhsServer.Controllers
@@ -19,9 +21,28 @@ namespace QlhsServer.Controllers
         [Authorize]
         public async Task<IActionResult> GetUsers()
         {
-            var result = await userRepo.GetUsersAsync(HttpContext);
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var result = await userRepo.GetUserAsync(userId);
 
             return Ok(result);
         }
+
+        [HttpPut("UpdateUser")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser(UserModel model)
+        {
+
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            {
+                var result = await userRepo.UpdateUserAsync(model, userId);
+
+                return Ok(result);
+            }
+        }
     }
+
 }

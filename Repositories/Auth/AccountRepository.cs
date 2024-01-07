@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using QlhsServer.Data;
 using QlhsServer.Helpers;
 using QlhsServer.Models;
+using QlhsServer.Models.Response;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,86 +26,141 @@ namespace QlhsServer.Repositories
 
         }
 
-        public async Task<object> SignInAsync(SignInModel model)
+        public async Task<RequestResponse> SignInAsync(SignInModel model)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
-            var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
-
-            if (user == null || !passwordValid)
+            try
             {
-                return new
+                var user = await userManager.FindByEmailAsync(model.Email);
+                var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+
+                if (user == null || !passwordValid)
                 {
-                    ErrorMessage = "Email or password is incorrect",
-                };
-            }
-
-            var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
-                };
-
-            var userRoles = await userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-            }
-
-            var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: configuration["JWT:ValidIssuer"],
-                audience: configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddMinutes(60),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
-            );
-
-
-            return new
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Message = "Sign in successfully"
-            };
-        }
-
-        public async Task<object> SignUpAsync(SignUpModel model)
-        {
-            var user = new ApplicationUser
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                UserName = model.Email
-            };
-
-
-            var result = await userManager.CreateAsync(user, model.Password);
-
-            System.Console.WriteLine(result.Succeeded);
-            if (result.Succeeded)
-            {
-                //kiểm tra role Customer đã có
-                if (!await roleManager.RoleExistsAsync(AppRole.Customer))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(AppRole.Customer));
+                    return new ErrorModel
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = "Email",
+                            Message = "Email or password is incorrect"
+                        }
+                    }
+                    };
                 }
 
-                await userManager.AddToRoleAsync(user, AppRole.Customer);
-                return new 
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                };
+
+                var userRoles = await userManager.GetRolesAsync(user);
+                foreach (var role in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                }
+
+                var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
+
+                var token = new JwtSecurityToken(
+                    issuer: configuration["JWT:ValidIssuer"],
+                    audience: configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddMinutes(60),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
+                );
+
+
+                return new SuccessModel
                 {
                     Status = StatusCodes.Status200OK,
-                    Message = "Sign up successfully"
+                    Message = "Sign in successfully",
+                    Data = new
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    }
                 };
             }
-            else
+            catch (Exception ex)
             {
-                return new 
+                return new ErrorModel
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = ex.Source,
+                            Message = ex.Message
+                        }
+                    }
+                };
+            }
+        }
+
+        public async Task<RequestResponse> SignUpAsync(SignUpModel model)
+        {
+            try
+            {
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    UserName = model.Email
+                };
+
+
+                var result = await userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    //kiểm tra role Customer đã có
+                    if (!await roleManager.RoleExistsAsync(AppRole.SuperAdmin))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(AppRole.SuperAdmin));
+                    }
+
+                    await userManager.AddToRoleAsync(user, AppRole.SuperAdmin);
+                    return new SuccessModel
+                    {
+                        Status = StatusCodes.Status200OK,
+                        Message = "Sign up successfully",
+                        Data = new
+                        {
+                            user.Id
+                        }
+                    };
+                }
+                return new ErrorModel
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    ErrorMessage = result.Errors.First().Description
+                    Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = "Email",
+                            Message = "Email is already taken"
+                        }
+                    }
                 };
             }
-
+            catch (Exception ex)
+            {
+                return new ErrorModel
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = ex.Source,
+                            Message = ex.Message
+                        }
+                    }
+                };
+            }
         }
+
     }
 }

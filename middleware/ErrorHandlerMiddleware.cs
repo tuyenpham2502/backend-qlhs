@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
-using QlhsServer.Models.Error;
+using QlhsServer.Models.Response;
 
 namespace QlhsServer.middleware;
 public class ErrorHandlerMiddleware
@@ -21,38 +21,73 @@ public class ErrorHandlerMiddleware
         }
         catch (Exception ex)
         {
-            ErrorResponse errorResponse = new ErrorResponse();
-
+            ErrorModel errorResponse = new ErrorModel();
+            System.Console.WriteLine(ex);
             switch (ex)
             {
                 case SqlException sqlEx:
-                    errorResponse.StatusCode = StatusCodes.Status500InternalServerError;
-                    errorResponse.Message = "Lost connection to the database";
+                    errorResponse.Status = StatusCodes.Status500InternalServerError;
+                    errorResponse.Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = sqlEx.Source,
+                            Message = sqlEx.Message
+                        }
+                    };
                     break;
 
                 case ValidationException validationEx:
-                    errorResponse.StatusCode = StatusCodes.Status400BadRequest;
-                    errorResponse.Message = validationEx.Message;
+                    errorResponse.Status = StatusCodes.Status400BadRequest;
+                    errorResponse.Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = validationEx.Source,
+                            Message = validationEx.Message
+                        }
+                    };
                     break;
 
                 case KeyNotFoundException keyNotFoundEx:
-                    errorResponse.StatusCode = StatusCodes.Status404NotFound;
-                    errorResponse.Message = keyNotFoundEx.Message;
+                    errorResponse.Status = StatusCodes.Status404NotFound;
+                    errorResponse.Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = keyNotFoundEx.Source,
+                            Message = keyNotFoundEx.Message
+                        }
+                    };
                     break;
 
                 case UnauthorizedAccessException unauthorizedEx:
-                    errorResponse.StatusCode = StatusCodes.Status401Unauthorized;
-                    errorResponse.Message = unauthorizedEx.Message;
+                    errorResponse.Status = StatusCodes.Status401Unauthorized;
+                    errorResponse.Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = unauthorizedEx.Source,
+                            Message = unauthorizedEx.Message
+                        }
+                    };
                     break;
 
                 default:
-                    errorResponse.StatusCode = StatusCodes.Status500InternalServerError;
-                    errorResponse.Message = ex.Message;
+                    errorResponse.Status = StatusCodes.Status500InternalServerError;
+                    errorResponse.Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = ex.Source,
+                            Message = ex.Message
+                        }
+                    };
                     break;
             }
 
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = errorResponse.StatusCode;
+            context.Response.StatusCode = errorResponse.Status;
             await context.Response.WriteAsJsonAsync(errorResponse);
         }
     }

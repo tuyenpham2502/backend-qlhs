@@ -17,7 +17,7 @@ namespace QlhsServer.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Helpers.AppRole.Customer)]
+        [Authorize(Roles = Helpers.AppRole.SuperAdmin)]
         public async Task<IActionResult> GetAllBooks()
         {
             try
