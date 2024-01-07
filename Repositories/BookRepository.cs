@@ -7,10 +7,10 @@ namespace QlhsServer.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        private readonly BookStoreContext _context;
+        private readonly QlhsContext _context;
         private readonly IMapper _mapper;
 
-        public BookRepository(BookStoreContext context, IMapper mapper)
+        public BookRepository(QlhsContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

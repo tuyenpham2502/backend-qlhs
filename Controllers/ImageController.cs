@@ -27,7 +27,7 @@ namespace QlhsServer.Controllers
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
 
-            var result = await fileRepo.FileStorageAsync(model, userId);
+            var result = await fileRepo.UploadFileAsync(model, userId);
             return Ok(result);
         }
 

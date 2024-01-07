@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace QlhsServer.Data
 {
-    public class BookStoreContext : IdentityDbContext<ApplicationUser>
+    public class QlhsContext : IdentityDbContext<ApplicationUser>
     {
-        public BookStoreContext(DbContextOptions<BookStoreContext> opt) : base(opt)
+        public QlhsContext(DbContextOptions<QlhsContext> opt) : base(opt)
         {
 
         }

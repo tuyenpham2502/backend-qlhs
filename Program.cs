@@ -46,8 +46,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<BookStoreContext>().AddDefaultTokenProviders();
-builder.Services.AddDbContext<BookStoreContext>(options =>
+    .AddEntityFrameworkStores<QlhsContext>().AddDefaultTokenProviders();
+builder.Services.AddDbContext<QlhsContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookStore"));
 });
@@ -82,6 +82,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -90,7 +91,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors();
-app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
