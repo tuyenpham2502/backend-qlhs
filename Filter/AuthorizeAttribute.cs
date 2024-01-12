@@ -3,8 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using NuGet.Protocol;
-using QlhsServer.Models.Response;
+using QlhsServer.Helpers;
 
 namespace QlhsServer.Filters
 {
@@ -16,18 +15,7 @@ namespace QlhsServer.Filters
             {
                 return;
             }
-            context.Result = new UnauthorizedObjectResult(new ErrorModel
-            {
-                Status = 401,
-                Errors = new List<ErrorModel.ErrorItem>
-                {
-                    new ErrorModel.ErrorItem
-                    {
-                        FieldName = "Unauthorized",
-                        Message = "You are not authorized to access this resource"
-                    }
-                }
-            });
+            context.Result = new UnauthorizedObjectResult(AppErrors.AuthenticatedError);
         }
     }
 }

@@ -4,7 +4,6 @@ namespace QlhsServer.Models.Response;
 public class ErrorModel : RequestResponse
 {
 
-    public int Status { get; set; }
     public List<ErrorItem> Errors { get; set; }
 
 
@@ -12,5 +11,7 @@ public class ErrorModel : RequestResponse
     {
         public string FieldName { get; set; }
         public string Message { get; set; }
+
+        public string Code { get; set; }
     }
 }

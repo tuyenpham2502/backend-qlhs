@@ -36,18 +36,7 @@ namespace QlhsServer.Repositories
 
                 if (user == null || !passwordValid)
                 {
-                    return new ErrorModel
-                    {
-                        Status = StatusCodes.Status400BadRequest,
-                        Errors = new List<ErrorModel.ErrorItem>
-                    {
-                        new ErrorModel.ErrorItem
-                        {
-                            FieldName = "General",
-                            Message = "Email or password is incorrect"
-                        }
-                    }
-                    };
+                    return AppErrors.LoginEmailOrPasswordIncorrect;
                 }
 
                 string token = await GenerateJwtToken(user);
@@ -145,18 +134,7 @@ namespace QlhsServer.Repositories
                         }
                     };
                 }
-                return new ErrorModel
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Errors = new List<ErrorModel.ErrorItem>
-                    {
-                        new ErrorModel.ErrorItem
-                        {
-                            FieldName = "Email",
-                            Message = "Email is already taken"
-                        }
-                    }
-                };
+                return AppErrors.EmailIsAlreadyTakenError;
             }
             catch (Exception ex)
             {
