@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using QlhsServer.Filters;
+using QlhsServer.Helpers;
 using QlhsServer.Models;
 using QlhsServer.Models.Response;
 using QlhsServer.Repositories;
@@ -22,19 +24,15 @@ namespace QlhsServer.Controllers
         {
             var result = await accountRepo.SignUpAsync(signUpModel);
 
-            return Ok(result);
+            return AppResult.ActionResult(result);
         }
 
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(SignInModel signInModel)
         {
-            var result = await accountRepo.SignInAsync(signInModel);
-            System.Console.WriteLine(result);
-            if (result is SuccessModel)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            RequestResponse result = await accountRepo.SignInAsync(signInModel);
+
+            return AppResult.ActionResult(result);
         }
 
         [HttpPost("Logout")]
