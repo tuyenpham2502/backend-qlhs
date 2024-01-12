@@ -1,6 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using QlhsServer.Data;
 using QlhsServer.Models;
 using System.Security.Claims;
@@ -10,13 +8,11 @@ namespace QlhsServer.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IConfiguration configuration;
 
 
         public UserRepository(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             this.userManager = userManager;
-            this.configuration = configuration;
         }
         public async Task<RequestResponse> GetUserAsync(string userId)
         {

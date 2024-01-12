@@ -7,5 +7,7 @@ namespace QlhsServer.Repositories
     {
         public Task<RequestResponse> SignUpAsync(SignUpModel model);
         public Task<RequestResponse> SignInAsync(SignInModel model);
+
+        public Task<RequestResponse> LogoutAsync();
     }
 }

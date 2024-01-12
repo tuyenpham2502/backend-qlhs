@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using QlhsServer.Data;
 using QlhsServer.Helpers;
@@ -16,14 +17,14 @@ namespace QlhsServer.Repositories
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly RoleManager<IdentityRole> roleManager;
-
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        private readonly IDistributedCache _distributedCache;
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager, IDistributedCache distributedCache)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
             this.roleManager = roleManager;
-
+            _distributedCache = distributedCache;
         }
 
         public async Task<RequestResponse> SignInAsync(SignInModel model)
@@ -42,33 +43,14 @@ namespace QlhsServer.Repositories
                     {
                         new ErrorModel.ErrorItem
                         {
-                            FieldName = "Email",
+                            FieldName = "General",
                             Message = "Email or password is incorrect"
                         }
                     }
                     };
                 }
 
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                };
-
-                var userRoles = await userManager.GetRolesAsync(user);
-                foreach (var role in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                }
-
-                var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: configuration["JWT:ValidIssuer"],
-                    audience: configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(60),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
-                );
+                string token = await GenerateJwtToken(user);
 
 
                 return new SuccessModel
@@ -77,7 +59,7 @@ namespace QlhsServer.Repositories
                     Message = "Sign in successfully",
                     Data = new
                     {
-                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        token
                     }
                 };
             }
@@ -96,6 +78,37 @@ namespace QlhsServer.Repositories
                     }
                 };
             }
+        }
+
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
+        {
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                };
+
+            var userRoles = await userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+            }
+
+            var authenKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: configuration["JWT:ValidIssuer"],
+                audience: configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddMinutes(60),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
+            );
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token).ToString();
+            await _distributedCache.SetStringAsync(user.Id.ToString(), tokenString, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            });
+
+            return tokenString;
         }
 
         public async Task<RequestResponse> SignUpAsync(SignUpModel model)
@@ -162,5 +175,32 @@ namespace QlhsServer.Repositories
             }
         }
 
+        public async Task<RequestResponse> LogoutAsync()
+        {
+            try
+            {
+                await signInManager.SignOutAsync();
+                return new SuccessModel
+                {
+                    Status = StatusCodes.Status200OK,
+                    Message = "Logout successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Errors = new List<ErrorModel.ErrorItem>
+                    {
+                        new ErrorModel.ErrorItem
+                        {
+                            FieldName = ex.Source,
+                            Message = ex.Message
+                        }
+                    }
+                };
+            }
+        }
     }
 }
