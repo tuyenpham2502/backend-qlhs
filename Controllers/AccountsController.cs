@@ -45,7 +45,7 @@ namespace QlhsServer.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return AppResult.ActionResult(result);
         }
     }
 }
