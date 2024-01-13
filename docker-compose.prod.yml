@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: qlhs-server:${version}
+    volumes:
+      - ./FileStorage:/path/in/container/FileStorage
     ports:
       - "7014:80"
     environment:
