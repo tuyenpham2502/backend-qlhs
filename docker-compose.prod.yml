@@ -7,12 +7,13 @@ services:
       dockerfile: Dockerfile
     image: qlhs-server:${version}
     volumes:
-      - ./FileStorage:/path/in/container/FileStorage
+      - FileStorage:/app/FileStorage
     ports:
       - "7014:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     # command: ${command}
-    
+volumes:
+  FileStorage:
 
 
