@@ -8,7 +8,6 @@ namespace QlhsServer.Helpers
     {
         public ApplicationMapper()
         {
-            CreateMap<Book, BookModel>().ReverseMap();
         }
     }
 }

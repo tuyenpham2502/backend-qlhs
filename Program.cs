@@ -22,7 +22,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFileRepository, FileStorageRepository>();
-builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddAuthenticationConfig(configuration);
 builder.Services.AddRedisConfiguration(configuration);

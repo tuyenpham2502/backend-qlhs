@@ -3,6 +3,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using QlhsServer.Filters;
+using QlhsServer.Helpers;
 using QlhsServer.Models;
 using QlhsServer.Models.Response;
 using QlhsServer.Repositories;
@@ -28,30 +29,27 @@ namespace QlhsServer.Controllers
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
 
-            var result = await fileRepo.UploadFileAsync(model, userId);
-            if (result is SuccessModel)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            var result = await fileRepo.UploadIFileAsync(model, userId);
+            return AppResult.ActionResult(result);
 
         }
 
-        [HttpGet("GetFile/{imageName}")]
-        public async Task<IActionResult> GetFile(string imageName)
+        [HttpGet("GetFile/{fileName}")]
+        public async Task<IActionResult> GetFile(string fileName)
         {
-            try
-            {
-                var result = await fileRepo.GetFileAsync(imageName);
 
-                return File(result, "image/jpeg");
-            }
-            catch (FileNotFoundException)
+            var result = await fileRepo.GetFileAsync(fileName);
+
+            var contentType = "application/octet-stream";
+
+            if (result != null)
             {
-                return NotFound("File not found");
+                return File(result, contentType);
             }
 
+            return NotFound();
 
         }
+
     }
 }
