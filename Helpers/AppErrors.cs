@@ -4,6 +4,59 @@ namespace QlhsServer.Helpers
 {
     public class AppErrors
     {
+
+        public static ErrorModel LoginEmailOrPasswordIncorrect = new ErrorModel
+        {
+            Status = StatusCodes.Status202Accepted,
+            Errors = new List<ErrorModel.ErrorItem> {
+                new ErrorModel.ErrorItem {
+                    FieldName = "General",
+                    Message = "Email or password is incorrect",
+                    Code = "000005"
+                }
+            }
+        };
+
+        public static ErrorModel EmailIsAlreadyTakenError = new ErrorModel
+        {
+            Status = StatusCodes.Status202Accepted,
+            Errors = new List<ErrorModel.ErrorItem> {
+                new ErrorModel.ErrorItem {
+                    FieldName = "Email",
+                    Message = "Email is already taken",
+                    Code = "000006"
+                }
+            }
+        };
+
+        public static ErrorModel FileExtensionIsNotSupportedError = new ErrorModel
+        {
+            Status = StatusCodes.Status415UnsupportedMediaType,
+            Errors = new List<ErrorModel.ErrorItem>
+            {
+                new ErrorModel.ErrorItem
+                    {
+                        FieldName = "File",
+                        Message = "File type is not supported",
+                        Code = "000415"
+                    }
+            }
+        };
+
+        public static ErrorModel FileNotFound = new ErrorModel
+        {
+            Status = StatusCodes.Status404NotFound,
+            Errors = new List<ErrorModel.ErrorItem>
+            {
+                new ErrorModel.ErrorItem
+                    {
+                        FieldName = "File",
+                        Message = "File not found",
+                        Code = "000404"
+                    }
+            }
+        };
+
         public static ErrorModel AuthenticatedError = new ErrorModel
         {
             Status = StatusCodes.Status401Unauthorized,
@@ -28,17 +81,6 @@ namespace QlhsServer.Helpers
             }
         };
 
-        public static ErrorModel LoginEmailOrPasswordIncorrect = new ErrorModel
-        {
-            Status = StatusCodes.Status202Accepted,
-            Errors = new List<ErrorModel.ErrorItem> {
-                new ErrorModel.ErrorItem {
-                    FieldName = "General",
-                    Message = "Email or password is incorrect",
-                    Code = "000005"
-                }
-            }
-        };
 
         public static ErrorModel InternalServerError = new ErrorModel
         {
@@ -52,17 +94,7 @@ namespace QlhsServer.Helpers
             }
         };
 
-        public static ErrorModel EmailIsAlreadyTakenError = new ErrorModel
-        {
-            Status = StatusCodes.Status202Accepted,
-            Errors = new List<ErrorModel.ErrorItem> {
-                new ErrorModel.ErrorItem {
-                    FieldName = "Email",
-                    Message = "Email is already taken",
-                    Code = "000006"
-                }
-            }
-        };
+
 
         public static ErrorModel UserNotFoundError = new ErrorModel
         {
@@ -75,6 +107,8 @@ namespace QlhsServer.Helpers
                 }
             }
         };
+
+
 
 
     };
